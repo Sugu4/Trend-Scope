@@ -4,12 +4,6 @@
 > Python · FastAPI · MongoDB · Elasticsearch · PostgreSQL
 
 [![Trend](https://img.shields.io/badge/Trend-ansehen-green?style=for-the-badge)](https://sugu4.github.io/Trend-Scope/)  
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)  
-[![Python](https://img.shields.io/badge/Python-3.12-blue)](https://python.org)  
-[![FastAPI](https://img.shields.io/badge/FastAPI-0.115-blue)](https://fastapi.tiangolo.com)  
-[![Docker](https://img.shields.io/badge/Docker-Compose-blue)](https://docker.com)  
-
----
 
 ## Über das Projekt
 
@@ -107,12 +101,12 @@ URL: http://localhost:5050 · Login: `admin@trendscope.de` / `password`
 
 ## Datenquellen
 
-| Quelle | API-Key | Beschreibung |
+Quelle | API-Key | Beschreibung |
 |--------|---------|--------------|
-| Reddit | ❌ Nein | Hot Posts aus 16 Subreddits via RSS |
+| Reddit (RSS) | ❌ Nein | Nutzung öffentlicher Reddit-RSS-Feeds (kein API-Key erforderlich) |
 | YouTube | ✅ Ja | Videos zu Trend-Themen via Data API v3 |
-| GitHub Trending | ❌ Nein | Trending Repositories nach Themen |
-| NewsAPI | ✅ Ja | Top-Headlines aus 5 Kategorien |
+| GitHub Trending | ❌ Nein | Trending-Repositories nach Themen |
+| NewsAPI | ✅ Ja | Top-Headlines aus mehreren Kategorien |
 
 ---
 
