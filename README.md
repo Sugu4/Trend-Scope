@@ -15,7 +15,7 @@
 
 TrendScope ist ein System zur Analyse und Vorhersage globaler Social-Media-Trends. Es sammelt automatisch Daten aus mehreren Quellen, verarbeitet diese mit NLP-Methoden und berechnet Trend-Scores sowie ML-Prognosen, dargestellt in einem interaktiven Dashboard.
 
-**Entwickelt als Schulungsprojekt.**
+Entwickelt als Schulungsprojekt.
 
 ---
 
@@ -26,13 +26,13 @@ TrendScope ist ein System zur Analyse und Vorhersage globaler Social-Media-Trend
 👉 https://www.docker.com/products/docker-desktop/
 
 Windows → Installer herunterladen → installieren → Docker Desktop starten.  
-Warten bis das Docker-Symbol in der Taskleiste **grün** wird.
+Warten bis das Docker-Symbol in der Taskleiste grün wird.
 
 ---
 
-### Schritt 2 — Projekt entpacken/ kopieren
+### Schritt 2 — Projekt fork
 
-Entpacken/ kopieren
+Du kannst dieses Repository forken und für deine eigenen Projekte verwenden.
 
 ---
 
@@ -44,7 +44,7 @@ Entpacken/ kopieren
 cp .env.example .env
 ```
 
-> Ohne API-Keys läuft alles im **Demo-Modus** mit Beispieldaten.
+> Ohne API-Keys läuft alles im Demo-Modus mit Beispieldaten.
 
 ---
 
@@ -56,7 +56,7 @@ PowerShell im Projektordner öffnen (Shift + Rechtsklick → "PowerShell öffnen
 docker compose up --build
 ```
 
-Beim **ersten Start** dauert es 5–10 Minuten.  
+Beim ersten Start dauert es 5–10 Minuten.  
 Bereit wenn du siehst:
 ```
 trendscope-api  | ✅ MongoDB verbunden
@@ -71,9 +71,9 @@ trendscope-api  | INFO: Uvicorn running on http://0.0.0.0:8000
 
 | Was | URL |
 |-----|-----|
-| **Frontend Dashboard** | `index.html` direkt im Browser öffnen |
-| **API + Swagger Docs** | http://localhost:8000/docs |
-| **System-Status** | http://localhost:8000/api/health |
+| Frontend Dashboard | `index.html` direkt im Browser öffnen |
+| API + Swagger Docs | http://localhost:8000/docs |
+| System-Status | http://localhost:8000/api/health |
 
 ---
 
@@ -89,13 +89,13 @@ In Swagger (http://localhost:8000/docs):
 ## Datenbanken im Browser
 
 ### MongoDB → Mongo Express
-**URL:** http://localhost:8081 · Login: `admin` / `password`
+URL: http://localhost:8081 · Login: `admin` / `password`
 
 ### Elasticsearch → Kibana
-**URL:** http://localhost:5601 · kein Login nötig
+URL: http://localhost:5601 · kein Login nötig
 
 ### PostgreSQL → pgAdmin
-**URL:** http://localhost:5050 · Login: `admin@trendscope.de` / `password`
+URL: http://localhost:5050 · Login: `admin@trendscope.de` / `password`
 
 **pgAdmin einmalig einrichten:**
 1. Rechtsklick auf "Servers" → "Register" → "Server..."
@@ -109,10 +109,10 @@ In Swagger (http://localhost:8000/docs):
 
 | Quelle | API-Key | Beschreibung |
 |--------|---------|--------------|
-| **Reddit** | ❌ Nein | Hot Posts aus 16 Subreddits via RSS |
-| **YouTube** | ✅ Ja | Videos zu Trend-Themen via Data API v3 |
-| **GitHub Trending** | ❌ Nein | Trending Repositories nach Themen |
-| **NewsAPI** | ✅ Optional | Top-Headlines aus 5 Kategorien |
+| Reddit | ❌ Nein | Hot Posts aus 16 Subreddits via RSS |
+| YouTube | ✅ Ja | Videos zu Trend-Themen via Data API v3 |
+| GitHub Trending | ❌ Nein | Trending Repositories nach Themen |
+| NewsAPI | ✅ Ja | Top-Headlines aus 5 Kategorien |
 
 ---
 
@@ -147,7 +147,7 @@ docker compose restart backend   # Nur Backend neu starten
 
 ## API Endpunkte
 
-Alle Endpunkte interaktiv testbar: **http://localhost:8000/docs**
+Alle Endpunkte interaktiv testbar: http://localhost:8000/docs
 
 | Methode | Pfad | Beschreibung |
 |---------|------|--------------|
@@ -209,7 +209,7 @@ Reddit RSS + YouTube API + GitHub Trending + NewsAPI
 |---------|--------|
 | Docker startet nicht | Docker Desktop öffnen, warten bis Symbol grün |
 | Port belegt | `docker compose down` → `up --build` |
-| Kibana "not ready" | Normal — ~1 Minute warten, Seite neu laden |
+| Kibana "not ready" | 1 Minute warten, Seite neu laden |
 | Elasticsearch mock-mode | `docker compose restart backend` |
 | Leere Trends | `POST /api/collect/run` in Swagger ausführen |
 | Prognose zeigt +0% | Mehrmals `collect/run` ausführen (min. 5x) |
