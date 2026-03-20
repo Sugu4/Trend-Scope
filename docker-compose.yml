@@ -2,11 +2,22 @@ version: "3.9"
 
 # ─── TrendScope — Docker Compose ──────────────────────────────
 # Startet alle Dienste lokal mit einem Befehl: docker compose up -d
+#
+# ┌─────────────────────────────────────────────────────────────┐
+# │  Dienst              Port    Beschreibung                   │
+# │  ─────────────────────────────────────────────────────────  │
+# │  FastAPI Backend     8000    REST API + Swagger Docs        │
+# │  MongoDB             27017   Rohdaten-Datenbank             │
+# │  Mongo Express       8081    MongoDB GUI (Browser)          │
+# │  Elasticsearch       9200    Analyse-Datenbank              │
+# │  Kibana              5601    Elasticsearch GUI (Browser)    │
+# │  PostgreSQL          5432    Ergebnis-Datenbank             │
+# │  pgAdmin             5050    PostgreSQL GUI (Browser)       │
+# └─────────────────────────────────────────────────────────────┘
 
 services:
 
-  # ── Datenbanken ───────────────────────────────────────────────
-
+  # ── MongoDB ───────────────────────────────────────────────────
   mongodb:
     image: mongo:7
     container_name: trendscope-mongo
@@ -18,6 +29,25 @@ services:
     environment:
       MONGO_INITDB_DATABASE: trendscope
 
+  # ── Mongo Express (MongoDB GUI) ───────────────────────────────
+  # Aufruf: http://localhost:8081
+  # Login: admin / password
+  mongo-express:
+    image: mongo-express:1.0.2
+    container_name: trendscope-mongo-gui
+    restart: unless-stopped
+    ports:
+      - "8081:8081"
+    environment:
+      ME_CONFIG_MONGODB_SERVER: mongodb
+      ME_CONFIG_MONGODB_PORT: 27017
+      ME_CONFIG_BASICAUTH_USERNAME: admin
+      ME_CONFIG_BASICAUTH_PASSWORD: password
+      ME_CONFIG_MONGODB_ENABLE_ADMIN: "true"
+    depends_on:
+      - mongodb
+
+  # ── Elasticsearch ─────────────────────────────────────────────
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:8.15.0
     container_name: trendscope-es
@@ -31,6 +61,20 @@ services:
     volumes:
       - es_data:/usr/share/elasticsearch/data
 
+  # ── Kibana (Elasticsearch GUI) ────────────────────────────────
+  # Aufruf: http://localhost:5601
+  kibana:
+    image: docker.elastic.co/kibana/kibana:8.15.0
+    container_name: trendscope-kibana
+    restart: unless-stopped
+    ports:
+      - "5601:5601"
+    environment:
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+    depends_on:
+      - elasticsearch
+
+  # ── PostgreSQL ────────────────────────────────────────────────
   postgres:
     image: postgres:16-alpine
     container_name: trendscope-pg
@@ -44,8 +88,24 @@ services:
     volumes:
       - pg_data:/var/lib/postgresql/data
 
-  # ── Backend ───────────────────────────────────────────────────
+  # ── pgAdmin (PostgreSQL GUI) ──────────────────────────────────
+  # Aufruf: http://localhost:5050
+  # Login: admin@trendscope.de / password
+  pgadmin:
+    image: dpage/pgadmin4:8
+    container_name: trendscope-pgadmin
+    restart: unless-stopped
+    ports:
+      - "5050:80"
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@trendscope.de
+      PGADMIN_DEFAULT_PASSWORD: password
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+    depends_on:
+      - postgres
 
+  # ── Backend ───────────────────────────────────────────────────
   backend:
     build:
       context: .
@@ -54,7 +114,9 @@ services:
     restart: unless-stopped
     ports:
       - "8000:8000"
-    env_file: .env
+    env_file:
+      - path: .env
+        required: false
     environment:
       MONGO_URI: mongodb://mongodb:27017
       ELASTICSEARCH_URL: http://elasticsearch:9200
@@ -68,3 +130,4 @@ volumes:
   mongo_data:
   es_data:
   pg_data:
+  pgadmin_data:
