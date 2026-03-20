@@ -3,10 +3,10 @@
 > Analyse und Vorhersage globaler Social-Media-Trends  
 > Python · FastAPI · MongoDB · Elasticsearch · PostgreSQL · scikit-learn
 
-[![Trend](https://img.shields.io/badge/Trend-ansehen-blue?style=for-the-badge)](https://sugu4.github.io/Trend-Scope/)  
+[![Trend](https://img.shields.io/badge/Trend-ansehen-green?style=for-the-badge)](https://sugu4.github.io/Trend-Scope/)  
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)  
 [![Python](https://img.shields.io/badge/Python-3.12-blue)](https://python.org)  
-[![FastAPI](https://img.shields.io/badge/FastAPI-0.115-green)](https://fastapi.tiangolo.com)  
+[![FastAPI](https://img.shields.io/badge/FastAPI-0.115-blue)](https://fastapi.tiangolo.com)  
 [![Docker](https://img.shields.io/badge/Docker-Compose-blue)](https://docker.com)  
 
 ---
