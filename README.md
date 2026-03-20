@@ -1,7 +1,7 @@
 # TrendScope
 
 > Analyse und Vorhersage globaler Social-Media-Trends  
-> Python · FastAPI · MongoDB · Elasticsearch · PostgreSQL · scikit-learn
+> Python · FastAPI · MongoDB · Elasticsearch · PostgreSQL
 
 [![Trend](https://img.shields.io/badge/Trend-ansehen-green?style=for-the-badge)](https://sugu4.github.io/Trend-Scope/)  
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)  
@@ -13,7 +13,7 @@
 
 ## Über das Projekt
 
-TrendScope ist ein System zur **Analyse und Vorhersage globaler Social-Media-Trends**. Es sammelt automatisch Daten aus mehreren Quellen, verarbeitet diese mit NLP-Methoden und berechnet Trend-Scores sowie ML-Prognosen — dargestellt in einem interaktiven Dashboard.
+TrendScope ist ein System zur Analyse und Vorhersage globaler Social-Media-Trends. Es sammelt automatisch Daten aus mehreren Quellen, verarbeitet diese mit NLP-Methoden und berechnet Trend-Scores sowie ML-Prognosen, dargestellt in einem interaktiven Dashboard.
 
 **Entwickelt als Schulungsprojekt.**
 
