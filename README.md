@@ -1,11 +1,11 @@
-# 📡 TrendScope
+# TrendScope
 
 > Analyse und Vorhersage globaler Social-Media-Trends  
 > Python · FastAPI · MongoDB · Elasticsearch · PostgreSQL · spaCy · scikit-learn
 
 ---
 
-## 🚀 Schnellstart mit Docker
+## Schnellstart mit Docker
 
 ### Schritt 1 — Docker Desktop installieren
 
@@ -52,13 +52,13 @@ trendscope-api  | INFO: Uvicorn running on http://0.0.0.0:8000
 
 | Was | URL |
 |-----|-----|
-| 🌐 **Frontend Dashboard** | `index.html` direkt im Browser öffnen |
-| ⚡ **API + Swagger Docs** | http://localhost:8000/docs |
-| 🟢 **System-Status** | http://localhost:8000/api/health |
+| **Frontend Dashboard** | `index.html` direkt im Browser öffnen |
+| **API + Swagger Docs** | http://localhost:8000/docs |
+| **System-Status** | http://localhost:8000/api/health |
 
 ---
 
-## 🗄️ Datenbanken im Browser einsehen
+## Datenbanken im Browser einsehen
 
 ### MongoDB → Mongo Express
 **URL:** http://localhost:8081 · Login: `admin` / `password`
@@ -87,7 +87,7 @@ Tabellen findest du unter:
 
 ---
 
-## 📋 Alle laufenden Dienste
+## Alle laufenden Dienste
 
 | Container | Port | Beschreibung |
 |-----------|------|--------------|
@@ -101,7 +101,7 @@ Tabellen findest du unter:
 
 ---
 
-## 🔄 Nützliche Befehle
+## Nützliche Befehle
 
 ```powershell
 docker compose up --build        # Alles starten
@@ -116,7 +116,7 @@ docker compose restart backend   # Nur Backend neu starten
 
 ---
 
-## 🌐 API Endpunkte
+## API Endpunkte
 
 Alle Endpunkte interaktiv testbar: **http://localhost:8000/docs**
 
@@ -133,7 +133,7 @@ Alle Endpunkte interaktiv testbar: **http://localhost:8000/docs**
 
 ---
 
-## 🔑 API-Keys (optional)
+## API-Keys (optional)
 
 Ohne Keys = Demo-Modus. Für echte Daten in `.env` eintragen:
 
@@ -147,7 +147,7 @@ Nach dem Eintragen: `docker compose restart backend`
 
 ---
 
-## ❓ Häufige Probleme
+## Häufige Probleme
 
 **Docker startet nicht** → Docker Desktop öffnen, warten bis Symbol grün  
 **Port belegt** → `docker compose down` dann erneut `up --build`  
