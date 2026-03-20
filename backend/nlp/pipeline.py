@@ -60,13 +60,33 @@ STOPWORDS = {
     "hold", "today", "during", "hundred", "real", "call", "feel",
     "keep", "let", "why", "part", "try", "turn", "move", "face",
     "doing", "tell", "asked", "went", "man", "read", "need", "land",
+    # Zu generische Wörter
+    "space", "open", "says", "said", "thread", "using", "used",
+    "code", "repo", "library", "tool", "build", "built", "list",
+    "report", "based", "support", "project", "release", "update",
+    "version", "issue", "feature", "free", "source", "latest",
+    "week", "month", "year", "people", "world", "company", "have",
+    "please", "everyone", "engineer", "research", "everyone", "anyone",
+    "someone", "something", "nothing", "everything", "anything", "really",
+    "actually", "probably", "already", "always", "never", "maybe", "still",
+    "pretty", "quite", "rather", "almost", "enough", "around", "against",
+    "without", "within", "between", "through", "during", "while", "where",
+    "since", "until", "unless", "although", "however", "therefore", "because",
+    "despite", "whether", "either", "neither", "both", "each", "every",
+    "share", "post", "link", "comment", "read", "write", "click", "check",
+    "find", "know", "think", "feel", "want", "need", "seem", "become",
+    "will", "more", "with", "they", "been", "were", "when", "which",
+    "their", "there", "what", "about", "would", "other", "some",
+    "than", "into", "each", "take", "come", "look", "only", "over",
+    "think", "most", "both", "many", "mean", "note", "last", "long",
+    "great", "little", "form", "place", "line", "life", "work",
 }
 
 # ── Wichtige Themen-Keywords die immer behalten werden ────────
 IMPORTANT_KEYWORDS = {
     "ai", "artificial", "intelligence", "climate", "change", "crypto",
     "bitcoin", "blockchain", "politics", "election", "trump", "biden",
-    "technology", "innovation", "science", "space", "nasa", "economy",
+    "technology", "innovation", "science", "nasa", "economy",
     "inflation", "cybersecurity", "hacking", "ukraine", "russia", "china",
     "covid", "health", "cancer", "nuclear", "war", "peace", "energy",
     "renewable", "solar", "electric", "tesla", "openai", "chatgpt",
@@ -166,3 +186,15 @@ def aggregate_keywords(posts: list[dict], top_n: int = 20) -> list[dict]:
         results.append({"keyword": kw, "count": count, "avg_sentiment": avg_sent})
 
     return results
+# Append to STOPWORDS
+STOPWORDS.update({
+    "best", "time", "world", "global", "people", "year", "years",
+    "life", "news", "week", "days", "long", "little", "very",
+    "great", "many", "most", "some", "they", "them", "their",
+    "what", "when", "where", "which", "while", "with", "would",
+    "about", "after", "again", "against", "between", "both",
+    "each", "further", "into", "more", "other", "same", "than",
+    "then", "there", "these", "they", "this", "those", "through",
+    "under", "until", "very", "well", "were", "what", "when",
+    "where", "which", "while", "will", "with", "would", "your",
+})

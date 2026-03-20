@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>TrendScope — Social Media Trend Intelligence</title>
+<title>TrendScope - Social Media Trend Intelligence</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
@@ -766,18 +766,18 @@
     <div class="hero" style="margin-bottom:36px">
       <div class="hero-left fade-in">
         <h1>Globale Trends.<br>In Echtzeit.</h1>
-        <p>TrendScope analysiert Social-Media-Daten aus X, Reddit, YouTube und TikTok — und zeigt dir, welche Themen gerade wirklich viral gehen.</p>
+        <p>TrendScope analysiert Social-Media-Daten aus Reddit, YouTube und NewsAPI und zeigt dir, welche Themen gerade wirklich viral gehen.</p>
         <div class="hero-actions">
           <button class="btn btn-primary" onclick="refreshData()">⟳ Daten aktualisieren</button>
           <button class="btn btn-secondary" onclick="exportData()">↓ Export CSV</button>
         </div>
         <div class="hero-stats">
           <div class="hstat">
-            <span class="hstat-num mono" id="stat-posts">2,4M</span>
-            <span class="hstat-label">Posts analysiert</span>
+            <span class="hstat-num mono" id="stat-posts">—</span>
+            <span class="hstat-label">Posts gesammelt</span>
           </div>
           <div class="hstat">
-            <span class="hstat-num mono" id="stat-trends">847</span>
+            <span class="hstat-num mono" id="stat-trends">—</span>
             <span class="hstat-label">Aktive Trends</span>
           </div>
           <div class="hstat">
@@ -906,7 +906,7 @@
   <!-- PAGE: PROGNOSE -->
   <div id="page-forecast" class="tab-content">
     <div class="section-title">KI-Trendprognose</div>
-    <div class="section-sub">Machine-Learning-basierte Vorhersagen für die nächsten 7–30 Tage. Basiert auf historischen Wachstumsraten und Sentimentanalyse.</div>
+    <div class="section-sub">Machine-Learning-basierte Vorhersagen für die nächsten 7-30 Tage. Basiert auf historischen Wachstumsraten und Sentimentanalyse.</div>
 
     <div class="grid-2-equal" style="margin-bottom:28px">
       <div class="card">
@@ -1035,7 +1035,7 @@
   <!-- PAGE: ABOUT -->
   <div id="page-about" class="tab-content">
     <div class="section-title">Über TrendScope</div>
-    <div class="section-sub">Ein Schulungsprojekt zur Analyse und Vorhersage globaler Social-Media-Trends</div>
+    <div class="section-sub">Ein Projekt zur Analyse und Vorhersage globaler Social-Media-Trends</div>
 
     <div class="grid-2" style="gap:24px">
       <div>
@@ -1583,22 +1583,38 @@ function renderAbout() {
 // ── REFRESH / EXPORT ──────────────────────────────────
 // ── API LADEN ─────────────────────────────────────────
 async function loadTrendsFromAPI() {
-  const data = await apiFetch('/trends/?limit=12');
+  const [data, stats, status] = await Promise.all([
+    apiFetch('/trends/?limit=20'),
+    apiFetch('/trends/stats'),
+    apiFetch('/collect/status'),
+  ]);
+
   if (data && Array.isArray(data) && data.length > 0) {
     trendsData = data.map(apiToTrendItem);
     setApiStatus(true);
-
-    // KPI-Stats aus API befüllen
-    const health = await apiFetch('/health');
-    if (health) {
-      const services = Object.values(health.services || {});
-      const online = services.filter(s => s === 'connected').length;
-      document.getElementById('stat-platforms').textContent = online > 0 ? online + '+' : '5';
-    }
   } else {
     trendsData = [...trendsDataMock];
     setApiStatus(false);
   }
+
+  if (stats) {
+    const posts = stats.total_posts || 0;
+    document.getElementById('stat-posts').textContent =
+      posts > 1000 ? (posts/1000).toFixed(1)+'K' : posts > 0 ? posts : '—';
+    document.getElementById('stat-trends').textContent =
+      stats.total_trends > 0 ? stats.total_trends : '—';
+    const numPlatforms = (stats.platforms || []).length;
+    document.getElementById('stat-platforms').textContent =
+      numPlatforms > 0 ? numPlatforms : '—';
+  } else if (status && status.total_posts > 0) {
+    const posts = status.total_posts;
+    document.getElementById('stat-posts').textContent =
+      posts > 1000 ? (posts/1000).toFixed(1)+'K' : posts;
+    const platforms = Object.keys(status.platforms || {}).length;
+    document.getElementById('stat-platforms').textContent = platforms || '—';
+    document.getElementById('stat-trends').textContent = trendsData.length || '—';
+  }
+
   renderTrends();
   if (lineChart) updateLineChart();
 }
@@ -1706,17 +1722,16 @@ async function filterTrends() {
 
 // ── INIT ──────────────────────────────────────────────
 window.addEventListener('DOMContentLoaded', async () => {
-  // Charts zuerst mit Mock-Daten rendern (sofort sichtbar)
-  renderTrends();
+  // Charts initialisieren
   initLineChart();
   initDonutChart();
   initBarChart();
 
-  // Dann API-Daten laden (überschreiben Mock wenn Backend läuft)
+  // Echte API-Daten laden
   await loadTrendsFromAPI();
 
-  // Alle 60 Sekunden auto-refresh
-  setInterval(loadTrendsFromAPI, 60_000);
+  // Alle 2 Minuten auto-refresh
+  setInterval(loadTrendsFromAPI, 120_000);
 });
 </script>
 </body>

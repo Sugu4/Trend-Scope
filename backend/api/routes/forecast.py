@@ -1,25 +1,75 @@
 """
-API Route: /api/forecast
+API Route: /api/forecast — Echte ML-Prognosen aus PostgreSQL-Daten
 """
 
 from fastapi import APIRouter, Query
-from ml.scoring import forecast_trend, batch_forecast, _classify_signal
+from ml.scoring import forecast_trend, batch_forecast
 
 router = APIRouter()
 
 
-@router.get("/", summary="Prognosen für Top-Trends")
+async def _get_real_history() -> dict[str, list[float]]:
+    """
+    Lädt echte Trend-Scores aus PostgreSQL.
+    Gruppiert nach Keyword und sortiert nach Zeit.
+    """
+    from db.postgres import _SessionLocal, TrendResult
+    from sqlalchemy import select
+
+    history = {}
+
+    try:
+        if _SessionLocal:
+            async with _SessionLocal() as session:
+                result = await session.execute(
+                    select(TrendResult.keyword, TrendResult.score, TrendResult.calculated_at)
+                    .order_by(TrendResult.keyword, TrendResult.calculated_at)
+                )
+                rows = result.fetchall()
+
+                for keyword, score, _ in rows:
+                    if keyword not in history:
+                        history[keyword] = []
+                    history[keyword].append(float(score))
+    except Exception:
+        pass
+
+    return history
+
+
+@router.get("/", summary="Prognosen für alle Trends")
 async def get_forecasts(
-    days: int = Query(30, ge=7, le=90, description="Prognosezeitraum in Tagen"),
+    days: int = Query(30, ge=7, le=90),
     limit: int = Query(10, ge=1, le=30),
 ):
-    """
-    Erstellt ML-Prognosen für die wichtigsten aktuellen Trends.
-    """
-    # Historische Daten aus DB laden (oder Demo-Daten)
-    history = _get_demo_history()
+    history = await _get_real_history()
+    if not history:
+        return {"days": days, "forecasts": [], "message": "Noch keine Daten — bitte erst /api/collect/run ausführen"}
+
     results = batch_forecast(history, forecast_days=days)
     return {"days": days, "forecasts": results[:limit]}
+
+
+@router.get("/emerging", summary="Aufsteigende Trends")
+async def get_emerging(limit: int = Query(5, ge=1, le=20)):
+    history = await _get_real_history()
+    if not history:
+        return []
+
+    all_fc = batch_forecast(history, forecast_days=14)
+    emerging = [f for f in all_fc if f["signal"] in ("Emerging", "Rising", "Stable")]
+    return emerging[:limit]
+
+
+@router.get("/declining", summary="Absinkende Trends")
+async def get_declining(limit: int = Query(5, ge=1, le=20)):
+    history = await _get_real_history()
+    if not history:
+        return []
+
+    all_fc = batch_forecast(history, forecast_days=14)
+    declining = [f for f in all_fc if f["signal"] in ("Falling", "Cooling", "Slowing")]
+    return declining[:limit]
 
 
 @router.get("/keyword/{keyword}", summary="Prognose für einzelnes Keyword")
@@ -27,46 +77,15 @@ async def get_keyword_forecast(
     keyword: str,
     days: int = Query(30, ge=7, le=90),
 ):
-    """Erstellt eine detaillierte Prognose für ein spezifisches Keyword."""
-    history = _get_demo_history()
+    history = await _get_real_history()
     hist = history.get(keyword)
-    if hist is None:
-        # Generische Prognose mit Standardwerten
-        hist = [50.0, 52.0, 55.0, 54.0, 58.0, 61.0, 63.0]
 
-    result = forecast_trend(keyword, hist, forecast_days=days)
-    return result
+    if not hist:
+        # Keyword nicht in DB — versuche ähnliches zu finden
+        similar = [k for k in history if keyword.lower() in k.lower()]
+        if similar:
+            hist = history[similar[0]]
+        else:
+            return {"error": f"Keyword '{keyword}' nicht gefunden", "available": list(history.keys())[:10]}
 
-
-@router.get("/emerging", summary="Aufsteigende Trends")
-async def get_emerging(limit: int = Query(5, ge=1, le=20)):
-    """Gibt Trends zurück die stark wachsen (Signal: Emerging / Rising)."""
-    history = _get_demo_history()
-    all_fc = batch_forecast(history, forecast_days=14)
-    emerging = [f for f in all_fc if f["signal"] in ("Emerging", "Rising")]
-    return emerging[:limit]
-
-
-@router.get("/declining", summary="Absinkende Trends")
-async def get_declining(limit: int = Query(5, ge=1, le=20)):
-    """Gibt Trends zurück die an Bedeutung verlieren."""
-    history = _get_demo_history()
-    all_fc = batch_forecast(history, forecast_days=14)
-    declining = [f for f in all_fc if f["signal"] in ("Falling", "Cooling")]
-    return declining[:limit]
-
-
-def _get_demo_history() -> dict[str, list[float]]:
-    """Demo-Verlaufsdaten für Prognose-Entwicklung."""
-    return {
-        "AI & Machine Learning":  [72, 75, 78, 80, 84, 88, 91, 93, 96],
-        "Klimawandel":             [65, 68, 70, 72, 74, 78, 82, 86, 89],
-        "Kryptowährung":           [55, 60, 58, 65, 70, 72, 77, 80, 85],
-        "Quantum Computing":       [20, 22, 25, 28, 33, 39, 46, 55, 64],
-        "Metaverse XR":            [85, 82, 78, 75, 74, 76, 77, 78, 78],
-        "NFT Marketplace":         [90, 82, 74, 65, 55, 48, 42, 38, 33],
-        "Green Hydrogen":          [30, 33, 37, 42, 48, 54, 61, 68, 75],
-        "Gaming 2025":             [60, 62, 65, 68, 70, 72, 75, 78, 82],
-        "Veganer Lifestyle":       [50, 52, 54, 55, 57, 58, 59, 60, 59],
-        "Web3 Gaming":             [70, 65, 60, 54, 48, 42, 38, 34, 30],
-    }
+    return forecast_trend(keyword, hist, forecast_days=days)

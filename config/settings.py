@@ -22,8 +22,10 @@ class Settings(BaseSettings):
     reddit_user_agent: str = "TrendScope/1.0"
 
     youtube_api_key: str = ""
-
     twitter_bearer_token: str = ""
+
+    # News APIs
+    newsapi_key: str = ""   # https://newsapi.org/register — kostenlos
 
     # App
     app_env: str = "development"

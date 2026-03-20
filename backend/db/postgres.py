@@ -92,12 +92,27 @@ async def save_trend_results(results: list[dict]) -> int:
 
 
 async def get_top_trends(limit: int = 10, category: str | None = None) -> list[dict]:
-    """Holt die aktuellen Top-Trends aus PostgreSQL."""
+    """
+    Holt die neuesten Top-Trends aus PostgreSQL.
+    Gibt pro Keyword nur den neuesten Eintrag zurück (für das Dashboard).
+    """
     if _SessionLocal is None:
         return []
-    from sqlalchemy import select, desc
+    from sqlalchemy import select, desc, func
     async with _SessionLocal() as session:
-        q = select(TrendResult).order_by(desc(TrendResult.score)).limit(limit)
+        # Subquery: neueste calculated_at pro Keyword
+        subq = (
+            select(TrendResult.keyword, func.max(TrendResult.calculated_at).label("max_at"))
+            .group_by(TrendResult.keyword)
+            .subquery()
+        )
+        q = (
+            select(TrendResult)
+            .join(subq, (TrendResult.keyword == subq.c.keyword) &
+                        (TrendResult.calculated_at == subq.c.max_at))
+            .order_by(desc(TrendResult.score))
+            .limit(limit)
+        )
         if category:
             q = q.where(TrendResult.category == category)
         result = await session.execute(q)

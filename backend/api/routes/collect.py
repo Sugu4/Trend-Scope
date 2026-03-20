@@ -70,15 +70,7 @@ async def _run_pipeline(limit: int):
         from ml.scoring import build_trend_results
         results = build_trend_results(aggregated)
 
-        # 7. Alte Daten löschen dann neue speichern
-        from db.postgres import _SessionLocal
-        if _SessionLocal:
-            from db.postgres import TrendResult
-            from sqlalchemy import delete
-            async with _SessionLocal() as session:
-                await session.execute(delete(TrendResult))
-                await session.commit()
-
+        # 7. Neue Ergebnisse ANHÄNGEN — alte behalten für ML-Historie!
         from db.postgres import save_trend_results
         await save_trend_results(results)
 
