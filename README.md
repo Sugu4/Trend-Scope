@@ -1,7 +1,20 @@
 # TrendScope
 
 > Analyse und Vorhersage globaler Social-Media-Trends  
-> Python · FastAPI · MongoDB · Elasticsearch · PostgreSQL · spaCy · scikit-learn
+> Python · FastAPI · MongoDB · Elasticsearch · PostgreSQL · scikit-learn
+
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![Python](https://img.shields.io/badge/Python-3.12-blue)](https://python.org)
+[![FastAPI](https://img.shields.io/badge/FastAPI-0.115-green)](https://fastapi.tiangolo.com)
+[![Docker](https://img.shields.io/badge/Docker-Compose-blue)](https://docker.com)
+
+---
+
+## Über das Projekt
+
+TrendScope ist ein System zur **Analyse und Vorhersage globaler Social-Media-Trends**. Es sammelt automatisch Daten aus mehreren Quellen, verarbeitet diese mit NLP-Methoden und berechnet Trend-Scores sowie ML-Prognosen — dargestellt in einem interaktiven Dashboard.
+
+**Entwickelt als Schulungsprojekt.**
 
 ---
 
@@ -16,15 +29,20 @@ Warten bis das Docker-Symbol in der Taskleiste **grün** wird.
 
 ---
 
-### Schritt 2 — Projekt kopieren
+### Schritt 2 — Projekt entpacken/ kopieren
 
-Kopiere das Projekt 
+Entpacken/ kopieren
 
 ---
 
 ### Schritt 3 — .env Datei anlegen
 
-`.env.example` kopieren und umbenennen zu `.env`  
+`.env.example` kopieren und umbenennen zu `.env`
+
+```bash
+cp .env.example .env
+```
+
 > Ohne API-Keys läuft alles im **Demo-Modus** mit Beispieldaten.
 
 ---
@@ -41,7 +59,7 @@ Beim **ersten Start** dauert es 5–10 Minuten.
 Bereit wenn du siehst:
 ```
 trendscope-api  | ✅ MongoDB verbunden
-trendscope-api  | ✅ Elasticsearch verbunden  
+trendscope-api  | ✅ Elasticsearch verbunden
 trendscope-api  | ✅ PostgreSQL verbunden
 trendscope-api  | INFO: Uvicorn running on http://0.0.0.0:8000
 ```
@@ -58,12 +76,21 @@ trendscope-api  | INFO: Uvicorn running on http://0.0.0.0:8000
 
 ---
 
-## Datenbanken im Browser einsehen
+### Schritt 6 — Erste Daten sammeln
+
+In Swagger (http://localhost:8000/docs):
+1. `POST /api/collect/run` aufklappen
+2. **"Try it out"** → **"Execute"**
+3. Mehrmals wiederholen für bessere ML-Prognosen
+
+---
+
+## Datenbanken im Browser
 
 ### MongoDB → Mongo Express
 **URL:** http://localhost:8081 · Login: `admin` / `password`
 
-### Elasticsearch → Kibana  
+### Elasticsearch → Kibana
 **URL:** http://localhost:5601 · kein Login nötig
 
 ### PostgreSQL → pgAdmin
@@ -72,18 +99,19 @@ trendscope-api  | INFO: Uvicorn running on http://0.0.0.0:8000
 **pgAdmin einmalig einrichten:**
 1. Rechtsklick auf "Servers" → "Register" → "Server..."
 2. Tab "General" → Name: `TrendScope`
-3. Tab "Connection":
-   - Host: `postgres`
-   - Port: `5432`
-   - Username: `postgres`
-   - Password: `password`
+3. Tab "Connection" → Host: `postgres`, Port: `5432`, User: `postgres`, Passwort: `password`
 4. Save
 
-Tabellen findest du unter:  
-`TrendScope → Databases → trendscope → Schemas → public → Tables`
+---
 
-- **`trend_results`** — Trend-Scores, Rankings, Wachstumsraten
-- **`forecast_results`** — ML-Prognosen mit Konfidenzintervallen
+## Datenquellen
+
+| Quelle | API-Key | Beschreibung |
+|--------|---------|--------------|
+| **Reddit** | ❌ Nein | Hot Posts aus 16 Subreddits via RSS |
+| **YouTube** | ✅ Ja | Videos zu Trend-Themen via Data API v3 |
+| **GitHub Trending** | ❌ Nein | Trending Repositories nach Themen |
+| **NewsAPI** | ✅ Optional | Top-Headlines aus 5 Kategorien |
 
 ---
 
@@ -123,33 +151,72 @@ Alle Endpunkte interaktiv testbar: **http://localhost:8000/docs**
 | Methode | Pfad | Beschreibung |
 |---------|------|--------------|
 | GET | `/api/health` | Status aller Dienste |
-| GET | `/api/trends/` | Top-Trends |
+| GET | `/api/trends/` | Top-Trends (neueste) |
+| GET | `/api/trends/stats` | Echte Statistiken |
 | GET | `/api/trends/?category=tech` | Filter nach Kategorie |
-| GET | `/api/trends/search?q=AI` | Suche |
-| GET | `/api/forecast/` | ML-Prognosen |
+| GET | `/api/trends/search?q=AI` | Keyword-Suche |
+| GET | `/api/forecast/` | ML-Prognosen (30 Tage) |
 | GET | `/api/forecast/emerging` | Aufsteigende Trends |
 | GET | `/api/forecast/declining` | Absinkende Trends |
 | POST | `/api/collect/run` | Datensammlung starten |
+| GET | `/api/collect/status` | Status letzte Sammlung |
 
 ---
 
-## API-Keys (optional)
+## API-Keys einrichten
 
-Ohne Keys = Demo-Modus. Für echte Daten in `.env` eintragen:
-
-| Plattform | Wo beantragen | Variable |
-|-----------|--------------|----------|
+| Plattform | Wo beantragen | Variable in `.env` |
+|-----------|--------------|---------------------|
+| YouTube | console.cloud.google.com → YouTube Data API v3 | `YOUTUBE_API_KEY` |
+| NewsAPI | newsapi.org/register | `NEWSAPI_KEY` |
 | Reddit | reddit.com/prefs/apps | `REDDIT_CLIENT_ID` + `REDDIT_CLIENT_SECRET` |
-| YouTube | console.cloud.google.com | `YOUTUBE_API_KEY` |
-| Twitter/X | developer.twitter.com | `TWITTER_BEARER_TOKEN` |
 
-Nach dem Eintragen: `docker compose restart backend`
+Nach dem Eintragen:
+```powershell
+docker compose restart backend
+```
+
+---
+
+## Systemarchitektur
+
+```
+Reddit RSS + YouTube API + GitHub Trending + NewsAPI
+                    ↓
+           Data Collector (Python/aiohttp)
+                    ↓
+           MongoDB (Rohdaten)
+                    ↓
+           NLP Pipeline (VADER Sentiment)
+                    ↓
+           Elasticsearch (Analyse/Suche)
+                    ↓
+           Trend Scoring (scikit-learn)
+                    ↓
+           PostgreSQL (Ergebnisse + Historie)
+                    ↓
+           FastAPI Backend (REST API)
+                    ↓
+           Frontend Dashboard (HTML/JS)
+```
 
 ---
 
 ## Häufige Probleme
 
-**Docker startet nicht** → Docker Desktop öffnen, warten bis Symbol grün  
-**Port belegt** → `docker compose down` dann erneut `up --build`  
-**Kibana "not ready"** → Normal, ~1 Minute warten, Seite neu laden  
-**pgAdmin leere Tabellen** → Erst Daten sammeln: Swagger → `POST /api/collect/run` → Execute
+| Problem | Lösung |
+|---------|--------|
+| Docker startet nicht | Docker Desktop öffnen, warten bis Symbol grün |
+| Port belegt | `docker compose down` → `up --build` |
+| Kibana "not ready" | Normal — ~1 Minute warten, Seite neu laden |
+| Elasticsearch mock-mode | `docker compose restart backend` |
+| Leere Trends | `POST /api/collect/run` in Swagger ausführen |
+| Prognose zeigt +0% | Mehrmals `collect/run` ausführen (min. 5x) |
+
+---
+
+## Lizenz
+
+MIT License — siehe [LICENSE](LICENSE)
+
+Copyright (c) 2026 Süleyman Gümüş
