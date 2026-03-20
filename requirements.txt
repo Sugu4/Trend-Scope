@@ -17,13 +17,13 @@ asyncpg==0.30.0                # PostgreSQL async Driver
 aiohttp==3.10.5                # Async HTTP Client (für alle APIs)
 
 # NLP
-spacy==3.7.6
+spacy==3.7.4
 nltk==3.9.1
 textblob==0.18.0
 
 # Machine Learning
 scikit-learn==1.5.2
-numpy==2.1.1
+numpy==1.26.4
 
 # Utilities
 python-dotenv==1.0.1

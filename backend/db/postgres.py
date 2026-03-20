@@ -111,7 +111,7 @@ async def get_top_trends(limit: int = 10, category: str | None = None) -> list[d
                 "mention_count": r.mention_count,
                 "growth_rate": round(r.growth_rate, 2),
                 "sentiment": round(r.sentiment, 2),
-                "calculated_at": r.calculated_at.isoformat(),
+                "calculated_at": r.calculated_at.isoformat() if r.calculated_at else "",
             }
             for r in rows
         ]

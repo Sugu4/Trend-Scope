@@ -114,7 +114,7 @@ def build_trend_results(
             "mention_count": count,
             "growth_rate": growth,
             "sentiment": sentiment,
-            "calculated_at": datetime.now(timezone.utc).isoformat(),
+            "calculated_at": datetime.utcnow(),
         })
 
     # Sortiert nach Score

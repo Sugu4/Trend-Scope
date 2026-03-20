@@ -1,0 +1,36 @@
+# ─── Geheime Konfiguration ───────────────────────────────────
+.env
+
+# ─── Python ──────────────────────────────────────────────────
+.venv/
+venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.egg-info/
+dist/
+build/
+
+# ─── Docker ──────────────────────────────────────────────────
+docker-compose.override.yml
+
+# ─── Datenbank-Daten (lokal) ─────────────────────────────────
+mongo_data/
+pg_data/
+es_data/
+
+# ─── IDE / Editor ────────────────────────────────────────────
+.vscode/
+.idea/
+*.suo
+*.user
+
+# ─── Windows ─────────────────────────────────────────────────
+Thumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# ─── Logs ────────────────────────────────────────────────────
+*.log
+logs/

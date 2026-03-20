@@ -16,9 +16,9 @@ Warten bis das Docker-Symbol in der Taskleiste **grün** wird.
 
 ---
 
-### Schritt 2 — Projekt entpacken
+### Schritt 2 — Projekt kopieren
 
-ZIP entpacken, z. B. nach `C:\trendscope\`
+Kopiere das Projekt 
 
 ---
 

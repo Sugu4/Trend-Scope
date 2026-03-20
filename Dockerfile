@@ -11,16 +11,12 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# spaCy Sprachmodelle
-RUN python -m spacy download de_core_news_sm && \
-    python -m spacy download en_core_web_sm
-
-# NLTK Daten
-RUN python -c "import nltk; nltk.download('vader_lexicon', quiet=True)"
+# NLTK Daten vorab laden
+RUN python -c "import nltk; nltk.download('vader_lexicon', quiet=True); nltk.download('punkt', quiet=True)"
 
 # Anwendungscode
 COPY backend/ ./backend/
-COPY config/  ./config/
+COPY config/  ./backend/config/
 
 WORKDIR /app/backend
 

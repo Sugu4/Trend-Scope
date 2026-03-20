@@ -32,7 +32,7 @@ INDEX_MAPPING = {
 async def connect_elasticsearch():
     global _es
     try:
-        _es = AsyncElasticsearch(settings.elasticsearch_url, request_timeout=5)
+        _es = AsyncElasticsearch(settings.elasticsearch_url, request_timeout=5, verify_certs=False, ssl_show_warn=False)
         if not await _es.indices.exists(index=INDEX):
             await _es.indices.create(index=INDEX, body=INDEX_MAPPING)
             logger.info("Index '%s' angelegt", INDEX)

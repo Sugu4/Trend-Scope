@@ -10,6 +10,7 @@ import logging
 from api.routes import trends, forecast, health, collect
 from db.mongo import connect_mongo, close_mongo
 from db.postgres import connect_postgres, close_postgres
+from db.elastic import connect_elasticsearch, close_elasticsearch
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
 logger = logging.getLogger(__name__)
@@ -21,10 +22,12 @@ async def lifespan(app: FastAPI):
     logger.info("🚀 TrendScope starting up...")
     await connect_mongo()
     await connect_postgres()
+    await connect_elasticsearch()
     yield
     logger.info("🛑 TrendScope shutting down...")
     await close_mongo()
     await close_postgres()
+    await close_elasticsearch()
 
 
 app = FastAPI(
@@ -36,7 +39,7 @@ app = FastAPI(
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],          # In Produktion einschränken
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
