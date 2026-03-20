@@ -1,0 +1,29 @@
+# ─── TrendScope Backend Dependencies ──────────────────────────
+
+# Web Framework
+fastapi==0.115.0
+uvicorn[standard]==0.30.6
+
+# Konfiguration
+pydantic-settings==2.4.0
+
+# Datenbanken
+motor==3.6.0                   # MongoDB async
+elasticsearch[async]==8.15.0  # Elasticsearch
+sqlalchemy[asyncio]==2.0.35   # PostgreSQL ORM
+asyncpg==0.30.0                # PostgreSQL async Driver
+
+# Social Media APIs
+aiohttp==3.10.5                # Async HTTP Client (für alle APIs)
+
+# NLP
+spacy==3.7.6
+nltk==3.9.1
+textblob==0.18.0
+
+# Machine Learning
+scikit-learn==1.5.2
+numpy==2.1.1
+
+# Utilities
+python-dotenv==1.0.1
