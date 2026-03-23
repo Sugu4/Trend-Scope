@@ -3,12 +3,9 @@
 > Analyse und Vorhersage globaler Social-Media-Trends  
 > Python · FastAPI · MongoDB · Elasticsearch · PostgreSQL
 
-[![Demo](https://img.shields.io/badge/Demo-ansehen-green?style=for-the-badge)](https://sugu4.github.io/Trend-Scope/)  
-<<<<<<< HEAD
+[![Demo](https://img.shields.io/badge/Demo-ansehen-green?style=for-the-badge)](https://sugu4.github.io/Trend-Scope/) 
 
 ---
-=======
->>>>>>> e78b153be1e87f6b2a73365aec65559336a2b2aa
 
 ## Über das Projekt
 
