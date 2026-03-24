@@ -194,7 +194,7 @@ Reddit RSS + YouTube API + GitHub Trending + NewsAPI
                     ↓
            FastAPI Backend (REST API)
                     ↓
-           Frontend Dashboard (HTML/JS)
+           Frontend Dashboard (HTML/CSS/JS)
 ```
 
 ---
